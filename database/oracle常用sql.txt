@@ -1,0 +1,37 @@
+oracle,mysql常用语句
+
+1. 删库必备(oracle)
+--查找最近执行的sql语句
+select r.first_load_time,r.* from v$sqlarea r order by r.first_load_time desc;
+
+--查找这个时间节点前表的记录
+select * from t00_rela_rightrole as of timestamp to_timestamp('2020-09-16/16:32:25','yyyy-mm-dd hh24:mi:ss') where t00_rela_rightrole.modulekey='105086'
+
+ --恢复这个时间节点前这个表的记录
+
+ alert table t00_rela_rightrole enable row movement;
+ flashback table t00_rela_rightrole to timestamp to_timestamp('2020-09-16/16:32:25','yyyy-mm-dd hh24:mi:ss');
+
+2.添加列和字段
+
+alter table T11_CR_BAD_DUTY_LIST add delay_date_shen varchar(20);
+
+comment on column T11_CR_BAD_DUTY_LIST.delay_date_shen is '申请延期日期';
+
+3. 获取子节点
+
+select t.id from t14_knowledge_product t start with t.id =#value#
+connect by prior t.id =t.parentid
+
+
+
+4.分割字段
+select count(1) from (
+	select * from T45_fc_project t
+	where t.flag ='1'
+	and regexp_substr(departkey,'[^,]+',1,level) in('3500','3501','CJ202003')
+	connect by level <=regexp_count(departkey,',')+1
+	and ptid =prior ptid
+	and prior dbms_random.value is not null
+	order by t.createtime desc
+)

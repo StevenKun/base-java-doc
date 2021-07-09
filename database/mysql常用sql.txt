@@ -1,0 +1,14 @@
+1. 时间统计(mysql)
+-- 获取表中当日数据
+select * from test_content where year(2021)=year(now()) and month(createtime)=month(now()) and day(createtime)=day(now());
+
+-- 获取表中上月数据
+select * from test_content where year(createtime) =year(now()) and month(createtime) =month(now())-1;
+
+-- 按年统计数据数量
+select Date_Format(createtime,'%Y') as dateTime, count(*) monthCount from test_content group by Date_Format(createtime,'%Y');
+
+-- 按照月份统计数量
+select Date_Format(createtime,'%Y-%m') as dateTime, count(*) monthCount from test_content group by Date_Format(createtime,'%Y-%m');
+
+
